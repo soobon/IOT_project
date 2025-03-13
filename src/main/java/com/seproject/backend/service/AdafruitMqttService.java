@@ -28,7 +28,7 @@ public class AdafruitMqttService {
     private static final String DOOR_REAL_PASS_FEED = "door_real_pass";
     private static final String BROKER_URL = "tcp://io.adafruit.com:1883";
     private static final String CLIENT_ID = "SmartHome";
-
+//ok git
     private MqttClient mqttClient;
 
     public AdafruitMqttService() {
