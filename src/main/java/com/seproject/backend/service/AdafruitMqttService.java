@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AdafruitMqttService {
     private static final String ADAFRUIT_IO_USERNAME = "soobon";
-    private static final String ADAFRUIT_IO_KEY = "aio_oMTR35LBxQ5Az4MEV4OQ9nnaROql";
+    private static final String ADAFRUIT_IO_KEY = "";
     private static final String BULB_FEED = "bulb";
 
     private static final String TEMP_FEED = "temperature";
