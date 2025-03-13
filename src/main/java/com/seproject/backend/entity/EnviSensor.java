@@ -22,11 +22,11 @@ public class EnviSensor {
     @Column(name = "sensorname")
     private String sensorName;
 
-    @Column(name = "humid")
-    private Double humidData;
-
-    @Column(name = "temperature")
-    private Double tempData;
+//    @Column(name = "humid")
+//    private Double humidData;
+//
+//    @Column(name = "temperature")
+//    private Double tempData;
 
     @ManyToOne
     @JoinColumn(name = "room_id")

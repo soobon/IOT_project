@@ -24,14 +24,14 @@ public class Door {
     @Column(name = "devicename")
     private String deviceName;
 
-    @Column(name = "status")
-    private Status status;
-
-    @Column(name = "type")
-    private Type type;
-
-    @Column(name = "password")
-    private String doorPassword;
+//    @Column(name = "status")
+//    private Status status;
+//
+//    @Column(name = "type")
+//    private Type type;
+//
+//    @Column(name = "password")
+//    private String doorPassword;
 
     @ManyToOne
     @JoinColumn(name = "room_id")

@@ -24,14 +24,14 @@ public class RGB {
     @Column(name = "devicename")
     private String deviceName;
 
-    @Column(name = "status")
-    private Status status;
-
-    @Column(name = "type")
-    private Type type;
-
-    @Column(name = "color")
-    private Type color;
+//    @Column(name = "status")
+//    private Status status;
+//
+//    @Column(name = "type")
+//    private Type type;
+//
+//    @Column(name = "color")
+//    private Type color;
 
     @ManyToOne
     @JoinColumn(name = "room_id")

@@ -15,6 +15,8 @@ public class AdafruitMqttService {
 
     private static final String LIGHT_FEED = "light";
 
+    private static final String RGB_COLOR_FEED = "rgb_color";
+
     private static final String FAN_STATUS_FEED = "fan_status";
 
     private static final String FAN_SPEED_FEED = "fan_speed";
@@ -58,10 +60,17 @@ public class AdafruitMqttService {
                         System.out.println("✨ Ánh sáng: " + payload);
                     }
                     if (topic.endsWith(FAN_STATUS_FEED)) {
+                        String topic_speed = ADAFRUIT_IO_USERNAME + "/feeds/" + FAN_SPEED_FEED;
                         if (payload.equals("1")) {
+                            MqttMessage speed_message = new MqttMessage("50".getBytes());
+                            mqttClient.publish(topic_speed, speed_message);
+
                             System.out.println("\uD83D\uDCA8 Trạng thái quạt: " + payload);
                             System.out.println("\uD83D\uDCA8 Tốc độ quạt: " + 50);
                         }else{
+                            MqttMessage speed_message = new MqttMessage("0".getBytes());
+                            mqttClient.publish(topic_speed, speed_message);
+
                             System.out.println("\uD83D\uDCA8 Trạng thái quạt: " + payload);
                             System.out.println("\uD83D\uDCA8 Tốc độ quạt: " + 0);
                         }
@@ -88,6 +97,7 @@ public class AdafruitMqttService {
             mqttClient.subscribe(ADAFRUIT_IO_USERNAME + "/feeds/" + DOOR_FEED);
             mqttClient.subscribe(ADAFRUIT_IO_USERNAME + "/feeds/" + DOOR_PASS_FEED);
             mqttClient.subscribe(ADAFRUIT_IO_USERNAME + "/feeds/" + DOOR_REAL_PASS_FEED);
+            mqttClient.subscribe(ADAFRUIT_IO_USERNAME + "/feeds/" + RGB_COLOR_FEED);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -134,6 +144,28 @@ public class AdafruitMqttService {
             MqttMessage message = new MqttMessage(value.getBytes());
             mqttClient.publish(topic, message);
             System.out.println("📤 Đã gửi dữ liệu tốc độ quạt: " + value);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void colorSet(String value) {
+        try {
+            String topic = ADAFRUIT_IO_USERNAME + "/feeds/" + RGB_COLOR_FEED;
+            MqttMessage message = new MqttMessage(value.getBytes());
+            mqttClient.publish(topic, message);
+            System.out.println("📤 Đã gửi dữ liệu màu sắc: " + value);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void createFeed(String value) {
+        try {
+            String topic = ADAFRUIT_IO_USERNAME + "/feeds/" + "fan-room2";
+            MqttMessage message = new MqttMessage(value.getBytes());
+            mqttClient.publish(topic, message);
+            System.out.println("📤 Tạo feed: " + value);
         } catch (Exception e) {
             e.printStackTrace();
         }

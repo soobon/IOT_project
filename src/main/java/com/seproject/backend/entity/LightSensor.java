@@ -22,8 +22,8 @@ public class LightSensor {
     @Column(name = "sensorname")
     private String sensorName;
 
-    @Column(name = "light")
-    private Double lightData;
+//    @Column(name = "light")
+//    private Double lightData;
 
     @ManyToOne
     @JoinColumn(name = "room_id")
