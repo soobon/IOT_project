@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AdafruitMqttService {
     private static final String ADAFRUIT_IO_USERNAME = "soobon";
-    private static final String ADAFRUIT_IO_KEY = "";
+    private static final String ADAFRUIT_IO_KEY = "aio_oMTR35LBxQ5Az4MEV4OQ9nnaROql";
     private static final String BULB_FEED = "bulb";
 
     private static final String TEMP_FEED = "temperature";
@@ -14,6 +14,8 @@ public class AdafruitMqttService {
     private static final String HUMID_FEED = "humid";
 
     private static final String LIGHT_FEED = "light";
+
+    private static final String RGB_COLOR_FEED = "rgb_color";
 
     private static final String FAN_STATUS_FEED = "fan_status";
 
@@ -95,6 +97,7 @@ public class AdafruitMqttService {
             mqttClient.subscribe(ADAFRUIT_IO_USERNAME + "/feeds/" + DOOR_FEED);
             mqttClient.subscribe(ADAFRUIT_IO_USERNAME + "/feeds/" + DOOR_PASS_FEED);
             mqttClient.subscribe(ADAFRUIT_IO_USERNAME + "/feeds/" + DOOR_REAL_PASS_FEED);
+            mqttClient.subscribe(ADAFRUIT_IO_USERNAME + "/feeds/" + RGB_COLOR_FEED);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -141,6 +144,28 @@ public class AdafruitMqttService {
             MqttMessage message = new MqttMessage(value.getBytes());
             mqttClient.publish(topic, message);
             System.out.println("📤 Đã gửi dữ liệu tốc độ quạt: " + value);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void colorSet(String value) {
+        try {
+            String topic = ADAFRUIT_IO_USERNAME + "/feeds/" + RGB_COLOR_FEED;
+            MqttMessage message = new MqttMessage(value.getBytes());
+            mqttClient.publish(topic, message);
+            System.out.println("📤 Đã gửi dữ liệu màu sắc: " + value);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void createFeed(String value) {
+        try {
+            String topic = ADAFRUIT_IO_USERNAME + "/feeds/" + "fan-room2";
+            MqttMessage message = new MqttMessage(value.getBytes());
+            mqttClient.publish(topic, message);
+            System.out.println("📤 Tạo feed: " + value);
         } catch (Exception e) {
             e.printStackTrace();
         }

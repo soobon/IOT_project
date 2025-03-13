@@ -24,14 +24,14 @@ public class Fan {
     @Column(name = "devicename")
     private String deviceName;
 
-    @Column(name = "status")
-    private Status status;
-
-    @Column(name = "type")
-    private Type type;
-
-    @Column(name = "speed")
-    private Double speed;
+//    @Column(name = "status")
+//    private Status status;
+//
+//    @Column(name = "type")
+//    private Type type;
+//
+//    @Column(name = "speed")
+//    private Double speed;
 
     @ManyToOne
     @JoinColumn(name = "room_id")

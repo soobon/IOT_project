@@ -2,6 +2,9 @@ package com.seproject.backend.service.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.seproject.backend.entity.*;
+import com.seproject.backend.repository.*;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import com.seproject.backend.service.AdafruitService;
@@ -12,34 +15,45 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
+
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
+//@RequiredArgsConstructor
 public class AdafruitServiceImpl implements AdafruitService {
 
-    private static final String ADAFRUIT_USERNAME = "soobon";
-    private static final String ADAFRUIT_IO_KEY = "";
-    private static final String FEED_NAME = "temperature";  // Tên feed chứa dữ liệu nhiệt độ
+    private RoomRepository roomRepository;
+
+    private FanRepository fanRepository;
+
+    private BulbRepository bulbRepository;
+
+    private DoorRepository doorRepository;
+
+    private RGBRepository rgbRepository;
 
     @Override
-    public String getTemperature() {
-        String url = "https://io.adafruit.com/api/v2/" + ADAFRUIT_USERNAME + "/feeds/" + FEED_NAME + "/data?limit=1";
+    public List<Room> getAllRoomByUserId(Integer id) {
+        return roomRepository.findAllByUserId(id);
+    }
 
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("X-AIO-Key", ADAFRUIT_IO_KEY);
-        headers.setContentType(MediaType.APPLICATION_JSON);
+    @Override
+    public List<Fan> getAllFanByRoomId(Integer id) {
+        return fanRepository.findAllByRoomId(id);
+    }
 
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+    @Override
+    public List<Bulb> getAllBulbByRoomId(Integer id) {
+        return bulbRepository.findAllByRoomId(id);
+    }
 
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode rootNode = mapper.readTree(response.getBody());
+    @Override
+    public List<Door> getAllDoorByRoomId(Integer id) {
+        return doorRepository.findAllByRoomId(id);
+    }
 
-            String data = rootNode.get(0).get("value").asText();
-            return data;
-        } catch (Exception e) {
-            return "Error parsing response";
-        }
+    @Override
+    public List<RGB> getAllRgbByRoomId(Integer id) {
+        return rgbRepository.findAllByRoomId(id);
     }
 }

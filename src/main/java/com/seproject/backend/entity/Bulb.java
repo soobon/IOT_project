@@ -24,11 +24,11 @@ public class Bulb {
     @Column(name = "devicename")
     private String deviceName;
 
-    @Column(name = "status")
-    private Status status;
-
-    @Column(name = "type")
-    private Type type;
+//    @Column(name = "status")
+//    private Status status;
+//
+//    @Column(name = "type")
+//    private Type type;
 
     @ManyToOne
     @JoinColumn(name = "room_id")

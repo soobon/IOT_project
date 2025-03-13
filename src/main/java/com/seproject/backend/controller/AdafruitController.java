@@ -14,16 +14,16 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 @CrossOrigin(origins = "*")
 class AdafruitController {
-    @Autowired
-    private AdafruitService adafruitService;
+//    @Autowired
+//    private AdafruitService adafruitService;
 
     @Autowired
     private AdafruitMqttService adafruitMqttService;
 
-    @GetMapping("/temp")
-    public ResponseEntity<String> getTemperature(){
-        return new ResponseEntity<>(adafruitService.getTemperature(), HttpStatus.OK);
-    }
+//    @GetMapping("/temp")
+//    public ResponseEntity<String> getTemperature(){
+//        return new ResponseEntity<>(adafruitService.getTemperature(), HttpStatus.OK);
+//    }
 
     @PostMapping("/light/on")
     public ResponseEntity<String> lightOn(){
@@ -54,4 +54,17 @@ class AdafruitController {
         adafruitMqttService.fanSpeed(speed);
         return new ResponseEntity<>("Fan is on! with " + speed + "% speed",HttpStatus.OK);
     }
+
+    @PostMapping("/feed/{value}")
+    public ResponseEntity<String> createFeed(@PathVariable String value){
+        adafruitMqttService.createFeed("20");
+        return new ResponseEntity<>("New feed created!",HttpStatus.OK);
+    }
+
+    @PostMapping("/rgb/{value}")
+    public ResponseEntity<String> setRGBColor(@PathVariable String value){
+        adafruitMqttService.colorSet(value);
+        return new ResponseEntity<>("Color set!",HttpStatus.OK);
+    }
+
 }
