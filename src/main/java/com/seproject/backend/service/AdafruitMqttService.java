@@ -58,10 +58,17 @@ public class AdafruitMqttService {
                         System.out.println("✨ Ánh sáng: " + payload);
                     }
                     if (topic.endsWith(FAN_STATUS_FEED)) {
+                        String topic_speed = ADAFRUIT_IO_USERNAME + "/feeds/" + FAN_SPEED_FEED;
                         if (payload.equals("1")) {
+                            MqttMessage speed_message = new MqttMessage("50".getBytes());
+                            mqttClient.publish(topic_speed, speed_message);
+
                             System.out.println("\uD83D\uDCA8 Trạng thái quạt: " + payload);
                             System.out.println("\uD83D\uDCA8 Tốc độ quạt: " + 50);
                         }else{
+                            MqttMessage speed_message = new MqttMessage("0".getBytes());
+                            mqttClient.publish(topic_speed, speed_message);
+
                             System.out.println("\uD83D\uDCA8 Trạng thái quạt: " + payload);
                             System.out.println("\uD83D\uDCA8 Tốc độ quạt: " + 0);
                         }
