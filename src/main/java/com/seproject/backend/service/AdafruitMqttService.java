@@ -1,6 +1,8 @@
 package com.seproject.backend.service;
 
 import org.eclipse.paho.client.mqttv3.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -31,6 +33,9 @@ public class AdafruitMqttService {
 //ok git
     private MqttClient mqttClient;
 
+    @Autowired
+    private SimpMessageSendingOperations messagingTemplate;
+
     public AdafruitMqttService() {
         try {
             mqttClient = new MqttClient(BROKER_URL, CLIENT_ID);
@@ -49,15 +54,19 @@ public class AdafruitMqttService {
                     String payload = new String(message.getPayload());
                     if (topic.endsWith(TEMP_FEED)) {
                         System.out.println("🔥 Nhiệt độ mới: " + payload);
+                        messagingTemplate.convertAndSend("/topic/temperature", payload);
                     }
                     if (topic.endsWith(BULB_FEED)) {
                         System.out.println("\uD83D\uDCA1 Trạng thái đèn: " + payload);
+                        messagingTemplate.convertAndSend("/topic/bulb", payload);
                     }
                     if (topic.endsWith(HUMID_FEED)) {
                         System.out.println("\uD83D\uDCA6 Độ ẩm: " + payload);
+                        messagingTemplate.convertAndSend("/topic/humid", payload);
                     }
                     if (topic.endsWith(LIGHT_FEED)) {
                         System.out.println("✨ Ánh sáng: " + payload);
+                        messagingTemplate.convertAndSend("/topic/light", payload);
                     }
                     if (topic.endsWith(FAN_STATUS_FEED)) {
                         String topic_speed = ADAFRUIT_IO_USERNAME + "/feeds/" + FAN_SPEED_FEED;
