@@ -21,25 +21,15 @@ public class DeviceLog {
     @Column(name = "id")
     private Integer id;
 
+    private String deviceName;
+
+    private String deviceType;
+
+    private String value;
+
     @Column(name = "time")
     private Date time;
 
     @Column(name = "description")
     private String description;
-
-    @ManyToOne
-    @JoinColumn(name = "bulb_id")
-    private Bulb bulb;
-
-    @ManyToOne
-    @JoinColumn(name = "door_id")
-    private Door door;
-
-    @ManyToOne
-    @JoinColumn(name = "rgb_id")
-    private RGB rgb;
-
-    @ManyToOne
-    @JoinColumn(name = "fan_id")
-    private Fan fan;
 }

@@ -14,16 +14,9 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 @CrossOrigin(origins = "*")
 class AdafruitController {
-//    @Autowired
-//    private AdafruitService adafruitService;
 
     @Autowired
     private AdafruitMqttService adafruitMqttService;
-
-//    @GetMapping("/temp")
-//    public ResponseEntity<String> getTemperature(){
-//        return new ResponseEntity<>(adafruitService.getTemperature(), HttpStatus.OK);
-//    }
 
     @PostMapping("/light/on")
     public ResponseEntity<String> lightOn(){
@@ -37,17 +30,17 @@ class AdafruitController {
         return new ResponseEntity<>("Light is off!",HttpStatus.OK);
     }
 
-    @PostMapping("/fan/on")
-    public ResponseEntity<String> fanOn(){
-        adafruitMqttService.fanSet("1");
-        return new ResponseEntity<>("Fan is on! with 50% speed",HttpStatus.OK);
-    }
-
-    @PostMapping("/fan/off")
-    public ResponseEntity<String> fanOff(){
-        adafruitMqttService.fanSet("0");
-        return new ResponseEntity<>("Fan is off!",HttpStatus.OK);
-    }
+//    @PostMapping("/fan/on")
+//    public ResponseEntity<String> fanOn(){
+//        adafruitMqttService.fanSet("1");
+//        return new ResponseEntity<>("Fan is on! with 50% speed",HttpStatus.OK);
+//    }
+//
+//    @PostMapping("/fan/off")
+//    public ResponseEntity<String> fanOff(){
+//        adafruitMqttService.fanSet("0");
+//        return new ResponseEntity<>("Fan is off!",HttpStatus.OK);
+//    }
 
     @PostMapping("/fan/on/{speed}")
     public ResponseEntity<String> fanSpeed(@PathVariable String speed){
@@ -63,7 +56,7 @@ class AdafruitController {
 
     @PostMapping("/rgb/{value}")
     public ResponseEntity<String> setRGBColor(@PathVariable String value){
-        adafruitMqttService.colorSet(value);
+        adafruitMqttService.colorSet('#'+value);
         return new ResponseEntity<>("Color set!",HttpStatus.OK);
     }
 

@@ -20,17 +20,15 @@ public class SensorLog {
     @Column(name = "id")
     private Integer id;
 
+    private String sensorName;
+
+    private String sensorType;
+
+    private String sensorValue;
+
     @Column(name = "time")
     private Date time;
 
     @Column(name = "description")
     private String description;
-
-    @ManyToOne
-    @JoinColumn(name = "envi_id")
-    private EnviSensor enviSensor;
-
-    @ManyToOne
-    @JoinColumn(name = "light_id")
-    private LightSensor lightSensor;
 }
