@@ -60,4 +60,16 @@ class AdafruitController {
         return new ResponseEntity<>("Color set!",HttpStatus.OK);
     }
 
+    @PostMapping("/door/open")
+    public ResponseEntity<String> doorOpen(){
+        adafruitMqttService.doorSet("1");
+        return new ResponseEntity<>("Door is opened!",HttpStatus.OK);
+    }
+
+    @PostMapping("/door/close")
+    public ResponseEntity<String> doorClose(){
+        adafruitMqttService.doorSet("0");
+        return new ResponseEntity<>("Door is closed!",HttpStatus.OK);
+    }
+
 }

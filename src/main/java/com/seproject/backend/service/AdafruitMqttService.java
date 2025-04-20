@@ -1,6 +1,10 @@
 package com.seproject.backend.service;
 
+import com.seproject.backend.entity.DeviceLog;
+import com.seproject.backend.entity.SensorLog;
 import com.seproject.backend.entity.User;
+import com.seproject.backend.repository.DeviceLogRepository;
+import com.seproject.backend.repository.SensorLogRepository;
 import com.seproject.backend.repository.UserRepository;
 import org.eclipse.paho.client.mqttv3.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +47,12 @@ public class AdafruitMqttService {
 
     @Autowired
     private SimpMessageSendingOperations messagingTemplate;
+
+    @Autowired
+    private SensorLogRepository sensorLogRepository;
+
+    @Autowired
+    private DeviceLogRepository deviceLogRepository;
 
 //    public AdafruitMqttService() {
 //        try {
@@ -168,19 +178,50 @@ public class AdafruitMqttService {
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
                     String payload = new String(message.getPayload());
+
+                    SensorLog sensorLog = SensorLog.builder()
+                            .owner(user.getUsername())
+                            .description("Sensor log")
+                            .build();
+
+                    DeviceLog deviceLog = DeviceLog.builder()
+                            .owner(user.getUsername())
+                            .description("Device log")
+                            .build();
+
                     if (topic.endsWith(TEMP_FEED)) {
+                        sensorLog.setSensorName("temperature");
+                        sensorLog.setSensorType("temperature");
+                        sensorLog.setSensorValue(payload);
+                        sensorLogRepository.save(sensorLog);
+
                         System.out.println("🔥 Nhiệt độ mới: " + payload);
                         messagingTemplate.convertAndSend("/topic/temperature", payload);
                     }
                     if (topic.endsWith(BULB_FEED)) {
+                        deviceLog.setDeviceName("bulb");
+                        deviceLog.setDeviceType("bulb");
+                        deviceLog.setValue(payload);
+                        deviceLogRepository.save(deviceLog);
+
                         System.out.println("\uD83D\uDCA1 Trạng thái đèn: " + payload);
                         messagingTemplate.convertAndSend("/topic/bulb", payload);
                     }
                     if (topic.endsWith(HUMID_FEED)) {
+                        sensorLog.setSensorName("humid");
+                        sensorLog.setSensorType("humid");
+                        sensorLog.setSensorValue(payload);
+                        sensorLogRepository.save(sensorLog);
+
                         System.out.println("\uD83D\uDCA6 Độ ẩm: " + payload);
                         messagingTemplate.convertAndSend("/topic/humid", payload);
                     }
                     if (topic.endsWith(LIGHT_FEED)) {
+                        sensorLog.setSensorName("light");
+                        sensorLog.setSensorType("light");
+                        sensorLog.setSensorValue(payload);
+                        sensorLogRepository.save(sensorLog);
+
                         System.out.println("✨ Ánh sáng: " + payload);
                         messagingTemplate.convertAndSend("/topic/light", payload);
                     }
@@ -201,10 +242,24 @@ public class AdafruitMqttService {
 //                        }
 //                    }
                     if (topic.endsWith(FAN_SPEED_FEED)) {
+                        deviceLog.setDeviceName("fan");
+                        deviceLog.setDeviceType("fan");
+                        deviceLog.setValue(payload);
+                        deviceLogRepository.save(deviceLog);
+
                         System.out.println("\uD83D\uDCA8 Tốc độ quạt: " + payload);
+                        messagingTemplate.convertAndSend("/topic/fan-speed", payload);
                     }
 
-                    // Gửi dữ liệu đến frontend nếu cần
+                    if (topic.endsWith(DOOR_FEED)){
+                        deviceLog.setDeviceName("door");
+                        deviceLog.setDeviceType("door");
+                        deviceLog.setValue(payload);
+                        deviceLogRepository.save(deviceLog);
+
+                        System.out.println("\uD83D\uDEAA  Trạng thái cửa: " + payload);
+                        messagingTemplate.convertAndSend("/topic/door", payload);
+                    }
                 }
 
                 @Override
@@ -230,10 +285,39 @@ public class AdafruitMqttService {
 
     public void lightSet(String value) {
         try {
+            DeviceLog deviceLog = DeviceLog.builder()
+                    .owner(ADAFRUIT_IO_USERNAME)
+                    .description("Device log")
+                    .deviceName("bulb")
+                    .deviceType("bulb")
+                    .value(value)
+                    .build();
+            deviceLogRepository.save(deviceLog);
+
             String topic = ADAFRUIT_IO_USERNAME + "/feeds/" + BULB_FEED;
             MqttMessage message = new MqttMessage(value.getBytes());
             mqttClient.publish(topic, message);
             System.out.println("📤 Đã gửi dữ liệu bật/tắt bóng đèn: " + value);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void doorSet(String value) {
+        try {
+            DeviceLog deviceLog = DeviceLog.builder()
+                    .owner(ADAFRUIT_IO_USERNAME)
+                    .description("Device log")
+                    .deviceName("door")
+                    .deviceType("door")
+                    .value(value)
+                    .build();
+            deviceLogRepository.save(deviceLog);
+
+            String topic = ADAFRUIT_IO_USERNAME + "/feeds/" + DOOR_FEED;
+            MqttMessage message = new MqttMessage(value.getBytes());
+            mqttClient.publish(topic, message);
+            System.out.println("📤 Đã gửi dữ liệu đóng/mở cửa: " + value);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -265,6 +349,15 @@ public class AdafruitMqttService {
 
     public void fanSpeed(String value) {
         try {
+            DeviceLog deviceLog = DeviceLog.builder()
+                    .owner(ADAFRUIT_IO_USERNAME)
+                    .description("Device log")
+                    .deviceName("fan")
+                    .deviceType("fan")
+                    .value(value)
+                    .build();
+            deviceLogRepository.save(deviceLog);
+
             String topic = ADAFRUIT_IO_USERNAME + "/feeds/" + FAN_SPEED_FEED;
             MqttMessage message = new MqttMessage(value.getBytes());
             mqttClient.publish(topic, message);
@@ -276,6 +369,15 @@ public class AdafruitMqttService {
 
     public void colorSet(String value) {
         try {
+            DeviceLog deviceLog = DeviceLog.builder()
+                    .owner(ADAFRUIT_IO_USERNAME)
+                    .description("Device log")
+                    .deviceName("color")
+                    .deviceType("color")
+                    .value(value)
+                    .build();
+            deviceLogRepository.save(deviceLog);
+
             String topic = ADAFRUIT_IO_USERNAME + "/feeds/" + RGB_COLOR_FEED;
             MqttMessage message = new MqttMessage(value.getBytes());
             mqttClient.publish(topic, message);

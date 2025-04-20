@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
-import java.util.Date;
+import java.sql.Date;
+import java.time.LocalDateTime;
 
 @Builder
 @Data
@@ -19,6 +21,7 @@ import java.util.Date;
 public class DeviceLog {
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String deviceName;
@@ -28,8 +31,12 @@ public class DeviceLog {
     private String value;
 
     @Column(name = "time")
-    private Date time;
+    @CreationTimestamp
+    private LocalDateTime time;
 
     @Column(name = "description")
     private String description;
+
+    @Column(name = "owner")
+    private String owner;
 }
