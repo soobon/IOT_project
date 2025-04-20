@@ -24,8 +24,6 @@ public class DeviceLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String deviceName;
-
     private String deviceType;
 
     private String value;
@@ -34,8 +32,8 @@ public class DeviceLog {
     @CreationTimestamp
     private LocalDateTime time;
 
-    @Column(name = "description")
-    private String description;
+//    @Column(name = "description")
+//    private String description;
 
     @Column(name = "owner")
     private String owner;

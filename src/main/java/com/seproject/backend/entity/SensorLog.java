@@ -24,8 +24,6 @@ public class SensorLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String sensorName;
-
     private String sensorType;
 
     private String sensorValue;
@@ -34,8 +32,8 @@ public class SensorLog {
     @CreationTimestamp
     private LocalDateTime time;
 
-    @Column(name = "description")
-    private String description;
+//    @Column(name = "description")
+//    private String description;
 
     @Column(name = "owner")
     private String owner;

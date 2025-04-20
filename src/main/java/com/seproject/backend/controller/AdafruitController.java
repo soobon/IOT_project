@@ -48,11 +48,11 @@ class AdafruitController {
         return new ResponseEntity<>("Fan is on! with " + speed + "% speed",HttpStatus.OK);
     }
 
-    @PostMapping("/feed/{value}")
-    public ResponseEntity<String> createFeed(@PathVariable String value, @RequestParam(defaultValue = "") String room){
-        adafruitMqttService.createFeed("20",room);
-        return new ResponseEntity<>("New feed created!",HttpStatus.OK);
-    }
+//    @PostMapping("/feed/{value}")
+//    public ResponseEntity<String> createFeed(@PathVariable String value, @RequestParam(defaultValue = "") String room){
+//        adafruitMqttService.createFeed("20",room);
+//        return new ResponseEntity<>("New feed created!",HttpStatus.OK);
+//    }
 
     @PostMapping("/rgb/{value}")
     public ResponseEntity<String> setRGBColor(@PathVariable String value, @RequestParam(defaultValue = "") String room){
