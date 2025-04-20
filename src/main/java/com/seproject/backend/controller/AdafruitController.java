@@ -19,14 +19,14 @@ class AdafruitController {
     private AdafruitMqttService adafruitMqttService;
 
     @PostMapping("/light/on")
-    public ResponseEntity<String> lightOn(){
-        adafruitMqttService.lightSet("1");
+    public ResponseEntity<String> lightOn(@RequestParam(defaultValue = "") String room){
+        adafruitMqttService.lightSet("1",room);
         return new ResponseEntity<>("Light is on!",HttpStatus.OK);
     }
 
     @PostMapping("/light/off")
-    public ResponseEntity<String> lightOff(){
-        adafruitMqttService.lightSet("0");
+    public ResponseEntity<String> lightOff(@RequestParam(defaultValue = "") String room){
+        adafruitMqttService.lightSet("0",room);
         return new ResponseEntity<>("Light is off!",HttpStatus.OK);
     }
 
@@ -43,32 +43,32 @@ class AdafruitController {
 //    }
 
     @PostMapping("/fan/on/{speed}")
-    public ResponseEntity<String> fanSpeed(@PathVariable String speed){
-        adafruitMqttService.fanSpeed(speed);
+    public ResponseEntity<String> fanSpeed(@PathVariable String speed, @RequestParam(defaultValue = "") String room){
+        adafruitMqttService.fanSpeed(speed,room);
         return new ResponseEntity<>("Fan is on! with " + speed + "% speed",HttpStatus.OK);
     }
 
     @PostMapping("/feed/{value}")
-    public ResponseEntity<String> createFeed(@PathVariable String value){
-        adafruitMqttService.createFeed("20");
+    public ResponseEntity<String> createFeed(@PathVariable String value, @RequestParam(defaultValue = "") String room){
+        adafruitMqttService.createFeed("20",room);
         return new ResponseEntity<>("New feed created!",HttpStatus.OK);
     }
 
     @PostMapping("/rgb/{value}")
-    public ResponseEntity<String> setRGBColor(@PathVariable String value){
-        adafruitMqttService.colorSet('#'+value);
+    public ResponseEntity<String> setRGBColor(@PathVariable String value, @RequestParam(defaultValue = "") String room){
+        adafruitMqttService.colorSet('#'+value,room);
         return new ResponseEntity<>("Color set!",HttpStatus.OK);
     }
 
     @PostMapping("/door/open")
-    public ResponseEntity<String> doorOpen(){
-        adafruitMqttService.doorSet("1");
+    public ResponseEntity<String> doorOpen(@RequestParam(defaultValue = "") String room){
+        adafruitMqttService.doorSet("1",room);
         return new ResponseEntity<>("Door is opened!",HttpStatus.OK);
     }
 
     @PostMapping("/door/close")
-    public ResponseEntity<String> doorClose(){
-        adafruitMqttService.doorSet("0");
+    public ResponseEntity<String> doorClose(@RequestParam(defaultValue = "") String room){
+        adafruitMqttService.doorSet("0",room);
         return new ResponseEntity<>("Door is closed!",HttpStatus.OK);
     }
 

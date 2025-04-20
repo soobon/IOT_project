@@ -146,7 +146,7 @@ public class AdafruitMqttService {
 //        }
 //    }
 
-    public void startMqttClient() {
+    public void startMqttClient(String room) {
         try {
             //retrieve user's information from SecurityContextHolder
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -182,14 +182,16 @@ public class AdafruitMqttService {
                     SensorLog sensorLog = SensorLog.builder()
                             .owner(user.getUsername())
                             .description("Sensor log")
+                            .room(room)
                             .build();
 
                     DeviceLog deviceLog = DeviceLog.builder()
                             .owner(user.getUsername())
                             .description("Device log")
+                            .room(room)
                             .build();
 
-                    if (topic.endsWith(TEMP_FEED)) {
+                    if (topic.endsWith(room+TEMP_FEED)) {
                         sensorLog.setSensorName("temperature");
                         sensorLog.setSensorType("temperature");
                         sensorLog.setSensorValue(payload);
@@ -198,7 +200,7 @@ public class AdafruitMqttService {
                         System.out.println("🔥 Nhiệt độ mới: " + payload);
                         messagingTemplate.convertAndSend("/topic/temperature", payload);
                     }
-                    if (topic.endsWith(BULB_FEED)) {
+                    if (topic.endsWith(room+BULB_FEED)) {
                         deviceLog.setDeviceName("bulb");
                         deviceLog.setDeviceType("bulb");
                         deviceLog.setValue(payload);
@@ -207,7 +209,7 @@ public class AdafruitMqttService {
                         System.out.println("\uD83D\uDCA1 Trạng thái đèn: " + payload);
                         messagingTemplate.convertAndSend("/topic/bulb", payload);
                     }
-                    if (topic.endsWith(HUMID_FEED)) {
+                    if (topic.endsWith(room+HUMID_FEED)) {
                         sensorLog.setSensorName("humid");
                         sensorLog.setSensorType("humid");
                         sensorLog.setSensorValue(payload);
@@ -216,7 +218,7 @@ public class AdafruitMqttService {
                         System.out.println("\uD83D\uDCA6 Độ ẩm: " + payload);
                         messagingTemplate.convertAndSend("/topic/humid", payload);
                     }
-                    if (topic.endsWith(LIGHT_FEED)) {
+                    if (topic.endsWith(room+LIGHT_FEED)) {
                         sensorLog.setSensorName("light");
                         sensorLog.setSensorType("light");
                         sensorLog.setSensorValue(payload);
@@ -241,7 +243,7 @@ public class AdafruitMqttService {
 //                            System.out.println("\uD83D\uDCA8 Tốc độ quạt: " + 0);
 //                        }
 //                    }
-                    if (topic.endsWith(FAN_SPEED_FEED)) {
+                    if (topic.endsWith(room+FAN_SPEED_FEED)) {
                         deviceLog.setDeviceName("fan");
                         deviceLog.setDeviceType("fan");
                         deviceLog.setValue(payload);
@@ -251,7 +253,7 @@ public class AdafruitMqttService {
                         messagingTemplate.convertAndSend("/topic/fan-speed", payload);
                     }
 
-                    if (topic.endsWith(DOOR_FEED)){
+                    if (topic.endsWith(room+DOOR_FEED)){
                         deviceLog.setDeviceName("door");
                         deviceLog.setDeviceType("door");
                         deviceLog.setValue(payload);
@@ -268,33 +270,25 @@ public class AdafruitMqttService {
             });
 
             mqttClient.connect(options);
-            mqttClient.subscribe(ADAFRUIT_IO_USERNAME + "/feeds/" + BULB_FEED);
-            mqttClient.subscribe(ADAFRUIT_IO_USERNAME + "/feeds/" + TEMP_FEED);
-            mqttClient.subscribe(ADAFRUIT_IO_USERNAME + "/feeds/" + HUMID_FEED);
-            mqttClient.subscribe(ADAFRUIT_IO_USERNAME + "/feeds/" + LIGHT_FEED);
-            mqttClient.subscribe(ADAFRUIT_IO_USERNAME + "/feeds/" + FAN_STATUS_FEED);
-            mqttClient.subscribe(ADAFRUIT_IO_USERNAME + "/feeds/" + FAN_SPEED_FEED);
-            mqttClient.subscribe(ADAFRUIT_IO_USERNAME + "/feeds/" + DOOR_FEED);
-            mqttClient.subscribe(ADAFRUIT_IO_USERNAME + "/feeds/" + DOOR_PASS_FEED);
-            mqttClient.subscribe(ADAFRUIT_IO_USERNAME + "/feeds/" + DOOR_REAL_PASS_FEED);
-            mqttClient.subscribe(ADAFRUIT_IO_USERNAME + "/feeds/" + RGB_COLOR_FEED);
+            mqttClient.subscribe(ADAFRUIT_IO_USERNAME + "/feeds/" + room + BULB_FEED);
+            mqttClient.subscribe(ADAFRUIT_IO_USERNAME + "/feeds/" + room + TEMP_FEED);
+            mqttClient.subscribe(ADAFRUIT_IO_USERNAME + "/feeds/" + room + HUMID_FEED);
+            mqttClient.subscribe(ADAFRUIT_IO_USERNAME + "/feeds/" + room + LIGHT_FEED);
+            mqttClient.subscribe(ADAFRUIT_IO_USERNAME + "/feeds/" + room + FAN_STATUS_FEED);
+            mqttClient.subscribe(ADAFRUIT_IO_USERNAME + "/feeds/" + room + FAN_SPEED_FEED);
+            mqttClient.subscribe(ADAFRUIT_IO_USERNAME + "/feeds/" + room + DOOR_FEED);
+            mqttClient.subscribe(ADAFRUIT_IO_USERNAME + "/feeds/" + room + DOOR_PASS_FEED);
+            mqttClient.subscribe(ADAFRUIT_IO_USERNAME + "/feeds/" + room + DOOR_REAL_PASS_FEED);
+            mqttClient.subscribe(ADAFRUIT_IO_USERNAME + "/feeds/" + room + RGB_COLOR_FEED);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void lightSet(String value) {
+    public void lightSet(String value, String room) {
         try {
-            DeviceLog deviceLog = DeviceLog.builder()
-                    .owner(ADAFRUIT_IO_USERNAME)
-                    .description("Device log")
-                    .deviceName("bulb")
-                    .deviceType("bulb")
-                    .value(value)
-                    .build();
-            deviceLogRepository.save(deviceLog);
 
-            String topic = ADAFRUIT_IO_USERNAME + "/feeds/" + BULB_FEED;
+            String topic = ADAFRUIT_IO_USERNAME + "/feeds/" + room + BULB_FEED;
             MqttMessage message = new MqttMessage(value.getBytes());
             mqttClient.publish(topic, message);
             System.out.println("📤 Đã gửi dữ liệu bật/tắt bóng đèn: " + value);
@@ -303,18 +297,10 @@ public class AdafruitMqttService {
         }
     }
 
-    public void doorSet(String value) {
+    public void doorSet(String value, String room) {
         try {
-            DeviceLog deviceLog = DeviceLog.builder()
-                    .owner(ADAFRUIT_IO_USERNAME)
-                    .description("Device log")
-                    .deviceName("door")
-                    .deviceType("door")
-                    .value(value)
-                    .build();
-            deviceLogRepository.save(deviceLog);
 
-            String topic = ADAFRUIT_IO_USERNAME + "/feeds/" + DOOR_FEED;
+            String topic = ADAFRUIT_IO_USERNAME + "/feeds/" + room + DOOR_FEED;
             MqttMessage message = new MqttMessage(value.getBytes());
             mqttClient.publish(topic, message);
             System.out.println("📤 Đã gửi dữ liệu đóng/mở cửa: " + value);
@@ -347,18 +333,10 @@ public class AdafruitMqttService {
 //        }
 //    }
 
-    public void fanSpeed(String value) {
+    public void fanSpeed(String value, String room) {
         try {
-            DeviceLog deviceLog = DeviceLog.builder()
-                    .owner(ADAFRUIT_IO_USERNAME)
-                    .description("Device log")
-                    .deviceName("fan")
-                    .deviceType("fan")
-                    .value(value)
-                    .build();
-            deviceLogRepository.save(deviceLog);
 
-            String topic = ADAFRUIT_IO_USERNAME + "/feeds/" + FAN_SPEED_FEED;
+            String topic = ADAFRUIT_IO_USERNAME + "/feeds/" + room + FAN_SPEED_FEED;
             MqttMessage message = new MqttMessage(value.getBytes());
             mqttClient.publish(topic, message);
             System.out.println("📤 Đã gửi dữ liệu tốc độ quạt: " + value);
@@ -367,18 +345,10 @@ public class AdafruitMqttService {
         }
     }
 
-    public void colorSet(String value) {
+    public void colorSet(String value, String room) {
         try {
-            DeviceLog deviceLog = DeviceLog.builder()
-                    .owner(ADAFRUIT_IO_USERNAME)
-                    .description("Device log")
-                    .deviceName("color")
-                    .deviceType("color")
-                    .value(value)
-                    .build();
-            deviceLogRepository.save(deviceLog);
 
-            String topic = ADAFRUIT_IO_USERNAME + "/feeds/" + RGB_COLOR_FEED;
+            String topic = ADAFRUIT_IO_USERNAME + "/feeds/" + room + RGB_COLOR_FEED;
             MqttMessage message = new MqttMessage(value.getBytes());
             mqttClient.publish(topic, message);
             System.out.println("📤 Đã gửi dữ liệu màu sắc: " + value);
@@ -387,9 +357,9 @@ public class AdafruitMqttService {
         }
     }
 
-    public void createFeed(String value) {
+    public void createFeed(String value, String room) {
         try {
-            String topic = ADAFRUIT_IO_USERNAME + "/feeds/" + "fan-room2";
+            String topic = ADAFRUIT_IO_USERNAME + "/feeds/" + room + "fan-room2";
             MqttMessage message = new MqttMessage(value.getBytes());
             mqttClient.publish(topic, message);
             System.out.println("📤 Tạo feed: " + value);

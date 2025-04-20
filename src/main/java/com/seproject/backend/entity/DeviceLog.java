@@ -39,4 +39,7 @@ public class DeviceLog {
 
     @Column(name = "owner")
     private String owner;
+
+    @Column(name = "room")
+    private String room;
 }

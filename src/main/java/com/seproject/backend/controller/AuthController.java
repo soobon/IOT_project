@@ -21,7 +21,13 @@ public class AuthController {
     @PostMapping
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest authRequest) {
         AuthResponse authResponse = authService.login(authRequest);
-        adafruitMqttService.startMqttClient();
+        adafruitMqttService.startMqttClient("");
         return ResponseEntity.ok(authResponse);
+    }
+
+    @PostMapping("/room")
+    public ResponseEntity<String> room(@RequestParam(defaultValue = "") String room) {
+        adafruitMqttService.startMqttClient(room);
+        return ResponseEntity.ok("Current room");
     }
 }
