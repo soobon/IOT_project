@@ -6,6 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @RestController
 @RequestMapping("/web/")
 @AllArgsConstructor
@@ -37,5 +40,20 @@ public class WebController {
     @GetMapping("door/{id}")
     public ResponseEntity<?> getAllDoorByRoomId(@PathVariable Integer id){
         return new ResponseEntity<>(adafruitService.getAllDoorByRoomId(id), HttpStatus.OK);
+    }
+
+    @GetMapping("light")
+    public ResponseEntity<?> getLightStatistic(@RequestParam LocalDate time){
+        return new ResponseEntity<>(adafruitService.getAllSensorLogBySensorType("light",time), HttpStatus.OK);
+    }
+
+    @GetMapping("temp")
+    public ResponseEntity<?> getTempStatistic(@RequestParam LocalDate time){
+        return new ResponseEntity<>(adafruitService.getAllSensorLogBySensorType("temperature",time), HttpStatus.OK);
+    }
+
+    @GetMapping("usage")
+    public ResponseEntity<?> getDeviceUsage(@RequestParam String deviceType, @RequestParam LocalDate time){
+        return new ResponseEntity<>(adafruitService.getAllDeviceLogByDeviceType(deviceType,time), HttpStatus.OK);
     }
 }
