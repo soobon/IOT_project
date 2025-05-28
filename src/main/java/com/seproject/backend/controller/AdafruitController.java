@@ -1,5 +1,6 @@
 package com.seproject.backend.controller;
 
+import com.seproject.backend.dto.PasswordDTO;
 import com.seproject.backend.service.AdafruitMqttService;
 import com.seproject.backend.service.AdafruitService;
 import lombok.AllArgsConstructor;
@@ -61,14 +62,20 @@ class AdafruitController {
     }
 
     @PostMapping("/door/open")
-    public ResponseEntity<String> doorOpen(@RequestParam(defaultValue = "") String room){
-        adafruitMqttService.doorSet("1",room);
+    public ResponseEntity<String> doorOpen(
+            @RequestParam(defaultValue = "") String room,
+            @RequestBody PasswordDTO password
+    ){
+        adafruitMqttService.doorSet("1",room, password.getPassword());
         return new ResponseEntity<>("Door is opened!",HttpStatus.OK);
     }
 
     @PostMapping("/door/close")
-    public ResponseEntity<String> doorClose(@RequestParam(defaultValue = "") String room){
-        adafruitMqttService.doorSet("0",room);
+    public ResponseEntity<String> doorClose(
+            @RequestParam(defaultValue = "") String room,
+            @RequestBody PasswordDTO password
+            ){
+        adafruitMqttService.doorSet("0",room, password.getPassword());
         return new ResponseEntity<>("Door is closed!",HttpStatus.OK);
     }
 

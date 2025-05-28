@@ -30,8 +30,8 @@ public class Door {
 //    @Column(name = "type")
 //    private Type type;
 //
-//    @Column(name = "password")
-//    private String doorPassword;
+    @Column(name = "password")
+    private String doorPassword;
 
     @ManyToOne
     @JoinColumn(name = "room_id")

@@ -42,14 +42,27 @@ public class WebController {
         return new ResponseEntity<>(adafruitService.getAllDoorByRoomId(id), HttpStatus.OK);
     }
 
-    @GetMapping("light")
-    public ResponseEntity<?> getLightStatistic(@RequestParam LocalDate time){
-        return new ResponseEntity<>(adafruitService.getAllSensorLogBySensorType("light",time), HttpStatus.OK);
-    }
+//    @GetMapping("light")
+//    public ResponseEntity<?> getLightStatistic(@RequestParam LocalDate time){
+//        return new ResponseEntity<>(adafruitService.getAllSensorLogBySensorType("light",time), HttpStatus.OK);
+//    }
+//
+//    @GetMapping("temp")
+//    public ResponseEntity<?> getTempStatistic(@RequestParam LocalDate time){
+//        return new ResponseEntity<>(adafruitService.getAllSensorLogBySensorType("temperature",time), HttpStatus.OK);
+//    }
+//
+//    @GetMapping("humid")
+//    public ResponseEntity<?> getHumidStatistic(@RequestParam LocalDate time){
+//        return new ResponseEntity<>(adafruitService.getAllSensorLogBySensorType("humid",time), HttpStatus.OK);
+//    }
 
-    @GetMapping("temp")
-    public ResponseEntity<?> getTempStatistic(@RequestParam LocalDate time){
-        return new ResponseEntity<>(adafruitService.getAllSensorLogBySensorType("temperature",time), HttpStatus.OK);
+    @GetMapping("statistic")
+    public ResponseEntity<?> getStatistic(
+            @RequestParam LocalDate time,
+            @RequestParam String type
+    ){
+        return new ResponseEntity<>(adafruitService.getAllSensorLogBySensorType(type,time), HttpStatus.OK);
     }
 
     @GetMapping("usage")

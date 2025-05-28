@@ -1,7 +1,11 @@
 package com.seproject.backend.service;
 
+import com.seproject.backend.entity.Door;
+import com.seproject.backend.entity.Room;
 import com.seproject.backend.entity.User;
 import com.seproject.backend.log.LogEvent;
+import com.seproject.backend.repository.DoorRepository;
+import com.seproject.backend.repository.RoomRepository;
 import com.seproject.backend.repository.UserRepository;
 import org.eclipse.paho.client.mqttv3.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +14,8 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.Authentication;
+
+import java.util.Optional;
 
 @Service
 public class AdafruitMqttService {
@@ -31,7 +37,7 @@ public class AdafruitMqttService {
 
     private static final String DOOR_FEED = "bbc-door";
 
-    private static final String DOOR_PASS_FEED = "door_pass";
+    private static final String DOOR_PASS_FEED = "bbc-pass";
 
     private static final String DOOR_REAL_PASS_FEED = "door_real_pass";
     private static final String BROKER_URL = "tcp://io.adafruit.com:1883";
@@ -41,6 +47,12 @@ public class AdafruitMqttService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private DoorRepository doorRepository;
+
+    @Autowired
+    private RoomRepository roomRepository;
 
     @Autowired
     private SimpMessageSendingOperations messagingTemplate;
@@ -59,7 +71,7 @@ public class AdafruitMqttService {
             }else throw new RuntimeException("Authentication is null");
 
             User user = userRepository.findByUsername(username).orElseThrow(
-                    () -> new RuntimeException("User not found")
+                    () -> new RuntimeException("User not found with username: " + username)
             );
 
             this.ADAFRUIT_IO_USERNAME = username;
@@ -159,6 +171,7 @@ public class AdafruitMqttService {
                     //door
                     if (topic.endsWith(room+DOOR_FEED)){
 
+
                         eventPublisher.publishEvent(
                                 LogEvent.builder()
                                         .owner(user.getUsername())
@@ -171,6 +184,43 @@ public class AdafruitMqttService {
 
                         System.out.println("\uD83D\uDEAA  Trạng thái cửa: " + payload);
                         messagingTemplate.convertAndSend("/topic/door", payload);
+                    }
+                    if (topic.endsWith(room+DOOR_PASS_FEED)){
+
+                        Room thisRoom = roomRepository.findAllByUserId(user.getId()).stream().findFirst().get();
+                        Door thisDoor = doorRepository.findAllByRoomId(thisRoom.getId()).stream().findFirst().get();
+                        thisDoor.setDoorPassword(payload);
+                        doorRepository.save(thisDoor);
+
+                        eventPublisher.publishEvent(
+                                LogEvent.builder()
+                                        .owner(user.getUsername())
+                                        .isDevice(true)
+                                        .room(room)
+                                        .type("door-pass")
+                                        .value(payload)
+                                        .build()
+                        );
+
+                        System.out.println("\uD83D\uDEAA Mật khẩu cửa: " + payload);
+                        messagingTemplate.convertAndSend("/topic/door-pass", payload);
+                    }
+
+                    if (topic.endsWith(room+RGB_COLOR_FEED)){
+
+
+                        eventPublisher.publishEvent(
+                                LogEvent.builder()
+                                        .owner(user.getUsername())
+                                        .isDevice(true)
+                                        .room(room)
+                                        .type("rgb-color")
+                                        .value(payload)
+                                        .build()
+                        );
+
+                        System.out.println("\uD83D\uDEAA  Trạng thái RGB: " + payload);
+                        messagingTemplate.convertAndSend("/topic/rgb-color", payload);
                     }
                 }
 
@@ -209,8 +259,29 @@ public class AdafruitMqttService {
         }
     }
 
-    public void doorSet(String value, String room) {
+    public void doorSet(String value, String room, String password) {
         try {
+
+            Optional<User> optionalUser = userRepository.findByUsername(ADAFRUIT_IO_USERNAME);
+            User user;
+            if (optionalUser.isPresent()) {
+                user = optionalUser.get();
+            }else{
+                throw new RuntimeException("Không tìm thấy user với username: " + ADAFRUIT_IO_USERNAME);
+            }
+
+            Room thisRoom = roomRepository.findAllByUserId(user.getId()).stream().findFirst().get();
+            Door thisDoor = doorRepository.findAllByRoomId(thisRoom.getId()).stream().findFirst().get();
+
+            System.out.println(thisRoom);
+            System.out.println(thisDoor);
+            System.out.println(thisDoor.getDoorPassword());
+            System.out.println(password);
+
+            if (!thisDoor.getDoorPassword().equals(password)) {
+                throw new RuntimeException("Door password doesn't match");
+            }
+
             String topic = ADAFRUIT_IO_USERNAME + "/feeds/" + room + DOOR_FEED;
             MqttMessage message = new MqttMessage(value.getBytes());
             mqttClient.publish(topic, message);

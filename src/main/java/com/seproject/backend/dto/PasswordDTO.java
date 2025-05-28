@@ -4,13 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalTime;
-import java.util.Date;
-
 @Data
 @Builder
 @AllArgsConstructor
-public class SensorLogDTO {
-    private LocalTime time;
-    private String value;
+public class PasswordDTO {
+    String password;
 }

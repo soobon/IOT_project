@@ -76,7 +76,7 @@ public class AdafruitServiceImpl implements AdafruitService {
             LocalTime hour = LocalTime.from(sensorLog.getTime());
             String value = sensorLog.getSensorValue();
             dtos.add(SensorLogDTO.builder()
-                            .timestamp(hour)
+                            .time(hour)
                             .value(value)
                     .build());
         }
