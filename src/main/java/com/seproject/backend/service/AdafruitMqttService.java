@@ -4,6 +4,7 @@ import com.seproject.backend.entity.Door;
 import com.seproject.backend.entity.Room;
 import com.seproject.backend.entity.User;
 import com.seproject.backend.log.LogEvent;
+import com.seproject.backend.mail.MyMailSender;
 import com.seproject.backend.repository.DoorRepository;
 import com.seproject.backend.repository.RoomRepository;
 import com.seproject.backend.repository.UserRepository;
@@ -60,6 +61,9 @@ public class AdafruitMqttService {
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
+    @Autowired
+    private MyMailSender myMailSender;
+
     public void startMqttClient(String room) {
         try {
             //retrieve user's information from SecurityContextHolder
@@ -104,6 +108,19 @@ public class AdafruitMqttService {
                                         .value(payload)
                                         .build()
                         );
+                        if (Integer.parseInt(payload)>=35){
+                            myMailSender.sendSimpleEmail(
+                                    "bonanhphuong@gmail.com",
+                                    "Warning from Future Home",
+                                    "Your temperature is greater than 35 degrees Celsius, you should turn the fan on!"
+                                    );
+                        } else if (Integer.parseInt(payload)<=10){
+                            myMailSender.sendSimpleEmail(
+                                    "bonanhphuong@gmail.com",
+                                    "Warning from Future Home",
+                                    "Your temperature is lower than 10 degrees Celsius, you should close the door!"
+                            );
+                        }
 
                         System.out.println("🔥 Nhiệt độ mới: " + payload);
                         messagingTemplate.convertAndSend("/topic/temperature", payload);
@@ -152,6 +169,14 @@ public class AdafruitMqttService {
 
                         System.out.println("✨ Ánh sáng: " + payload);
                         messagingTemplate.convertAndSend("/topic/light", payload);
+
+                        if (Integer.parseInt(payload)<=10) {
+                            myMailSender.sendSimpleEmail(
+                                    "bonanhphuong@gmail.com",
+                                    "Warning from Future Home",
+                                    "Your room need more light, you should open the door!"
+                            );
+                        }
                     }
                     //fan-fan_speed
                     if (topic.endsWith(room+FAN_SPEED_FEED)) {
