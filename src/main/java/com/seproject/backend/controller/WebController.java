@@ -1,5 +1,6 @@
 package com.seproject.backend.controller;
 
+import com.seproject.backend.dto.ChangePasswordDTO;
 import com.seproject.backend.service.AdafruitService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

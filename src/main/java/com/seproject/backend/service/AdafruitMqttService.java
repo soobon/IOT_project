@@ -74,6 +74,8 @@ public class AdafruitMqttService {
                 System.out.println("Username is:" + username);
             }else throw new RuntimeException("Authentication is null");
 
+            System.out.println("Username is:" + username);
+
             User user = userRepository.findByUsername(username).orElseThrow(
                     () -> new RuntimeException("User not found with username: " + username)
             );
