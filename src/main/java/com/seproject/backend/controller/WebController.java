@@ -1,7 +1,9 @@
 package com.seproject.backend.controller;
 
 import com.seproject.backend.dto.ChangePasswordDTO;
+import com.seproject.backend.dto.ScenarioDTO;
 import com.seproject.backend.service.AdafruitService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -69,5 +71,25 @@ public class WebController {
     @GetMapping("usage")
     public ResponseEntity<?> getDeviceUsage(@RequestParam String deviceType, @RequestParam LocalDate time){
         return new ResponseEntity<>(adafruitService.getAllDeviceLogByDeviceType(deviceType,time), HttpStatus.OK);
+    }
+
+    @GetMapping("scenario")
+    public ResponseEntity<?> getAllScenario(){
+        return ResponseEntity.ok(adafruitService.getAllScenario());
+    }
+
+    @PostMapping("scenario")
+    public ResponseEntity<?> addScenario(HttpServletRequest request, @RequestBody ScenarioDTO dto){
+        return ResponseEntity.ok(adafruitService.addScenario(dto, request));
+    }
+
+    @DeleteMapping("scenario")
+    public ResponseEntity<?> addScenario(@RequestParam Integer id){
+        return ResponseEntity.ok(adafruitService.deleteScenario(id));
+    }
+
+    @GetMapping("log")
+    public ResponseEntity<?> getAllLog(@RequestParam LocalDate time){
+        return ResponseEntity.ok(adafruitService.getAllDeviceLog(time));
     }
 }

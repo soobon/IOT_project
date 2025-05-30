@@ -1,7 +1,9 @@
 package com.seproject.backend.service;
 
+import com.seproject.backend.dto.ScenarioDTO;
 import com.seproject.backend.dto.SensorLogDTO;
 import com.seproject.backend.entity.*;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,4 +21,12 @@ public interface AdafruitService {
     List<SensorLogDTO> getAllSensorLogBySensorType(String sensorType, LocalDate time);
 
     Integer getAllDeviceLogByDeviceType(String deviceType, LocalDate time);
+
+    List<Scenario> getAllScenario();
+
+    Scenario addScenario(ScenarioDTO dto, HttpServletRequest request);
+
+    Scenario deleteScenario(Integer id);
+
+    List<DeviceLog> getAllDeviceLog(LocalDate time);
 }

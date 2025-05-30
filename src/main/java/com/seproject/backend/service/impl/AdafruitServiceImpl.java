@@ -2,9 +2,11 @@ package com.seproject.backend.service.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.seproject.backend.dto.ScenarioDTO;
 import com.seproject.backend.dto.SensorLogDTO;
 import com.seproject.backend.entity.*;
 import com.seproject.backend.repository.*;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
@@ -41,6 +43,10 @@ public class AdafruitServiceImpl implements AdafruitService {
     private SensorLogRepository sensorLogRepository;
 
     private DeviceLogRepository deviceLogRepository;
+
+    private ScenarioRepository scenarioRepository;
+
+    private UserRepository userRepository;
 
     @Override
     public List<Room> getAllRoomByUserId(Integer id) {
@@ -92,5 +98,48 @@ public class AdafruitServiceImpl implements AdafruitService {
             count += 1;
         }
         return count;
+    }
+
+    @Override
+    public List<Scenario> getAllScenario() {
+        return scenarioRepository.findAll();
+    }
+
+    @Override
+    public Scenario addScenario(ScenarioDTO dto, HttpServletRequest request) {
+        String username = request.getHeader("username");
+
+        System.out.println("Current username: "+username);
+
+        User user = userRepository.findByUsername(username).get();
+
+        Scenario scenario = Scenario.builder()
+                .device(dto.getDevice())
+                .status(dto.getStatus())
+                .hour(dto.getHour())
+                .minute(dto.getMinute())
+                .user(user)
+                .name(dto.getName())
+                .build();
+        scenarioRepository.save(scenario);
+        return scenario;
+    }
+
+    @Override
+    public Scenario deleteScenario(Integer id) {
+        Scenario scenario = scenarioRepository.findById(id).get();
+        scenarioRepository.delete(scenario);
+        return scenario;
+    }
+
+    @Override
+    public List<DeviceLog> getAllDeviceLog(LocalDate time) {
+        List<DeviceLog> deviceLogs = deviceLogRepository.findAll();
+        List<DeviceLog> filteredDeviceLogs = new ArrayList<>();
+        for (DeviceLog deviceLog : deviceLogs) {
+            if (!time.equals(LocalDate.from(deviceLog.getTime()))) continue;
+            filteredDeviceLogs.add(deviceLog);
+        }
+        return filteredDeviceLogs;
     }
 }
