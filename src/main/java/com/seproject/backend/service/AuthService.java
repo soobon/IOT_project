@@ -43,6 +43,8 @@ public class AuthService {
 
     private DoorRepository doorRepository;
 
+    private AdafruitMqttService adafruitMqttService;
+
     public PasswordDTO changePassword(ChangePasswordDTO dto, HttpServletRequest request) {
         String username = request.getHeader("username");
 
@@ -59,6 +61,7 @@ public class AuthService {
         if (dto.getNewPassword().equals(dto.getConfirmPassword())) {
             thisDoor.setDoorPassword(dto.getNewPassword());
             doorRepository.save(thisDoor);
+            adafruitMqttService.changePassword(dto.getNewPassword(), "");
         }else{
             throw new RuntimeException("New password does not match");
         }

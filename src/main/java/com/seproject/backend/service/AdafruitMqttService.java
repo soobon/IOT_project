@@ -340,6 +340,17 @@ public class AdafruitMqttService {
         }
     }
 
+    public void changePassword(String value, String room) {
+        try {
+            String topic = ADAFRUIT_IO_USERNAME + "/feeds/" + room + DOOR_PASS_FEED;
+            MqttMessage message = new MqttMessage(value.getBytes());
+            mqttClient.publish(topic, message);
+            System.out.println("Đã gửi mật khẩu mới: " + value);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
 //    public void createFeed(String value, String room) {
 //        try {
 //            String topic = ADAFRUIT_IO_USERNAME + "/feeds/" + room + "fan-room2";

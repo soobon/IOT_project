@@ -22,6 +22,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -140,6 +141,7 @@ public class AdafruitServiceImpl implements AdafruitService {
             if (!time.equals(LocalDate.from(deviceLog.getTime()))) continue;
             filteredDeviceLogs.add(deviceLog);
         }
+        Collections.reverse(filteredDeviceLogs);
         return filteredDeviceLogs;
     }
 }
